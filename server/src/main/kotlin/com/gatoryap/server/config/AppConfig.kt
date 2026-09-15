@@ -8,6 +8,7 @@ package com.gatoryap.server.config
 data class AppConfig(
     val http: HttpConfig,
     val database: DatabaseConfig,
+    val auth: AuthConfig,
 ) {
     companion object {
         fun fromEnv(env: (String) -> String? = System::getenv): AppConfig = AppConfig(
@@ -21,6 +22,7 @@ data class AppConfig(
                 password = env("DATABASE_PASSWORD") ?: "gatoryap",
                 maxPoolSize = env("DATABASE_MAX_POOL_SIZE")?.toIntOrNull() ?: 10,
             ),
+            auth = AuthConfigReader.read(env),
         )
 
         /** Matches docker-compose.yml so a clean clone runs with no configuration. */
