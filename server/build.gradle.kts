@@ -29,6 +29,12 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.config.yaml)
+    implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.server.rate.limit)
+    implementation(libs.java.jwt)
+    implementation(libs.bouncycastle.provider)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
@@ -41,5 +47,15 @@ dependencies {
     implementation(libs.logback.classic)
 
     testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.ktor.client.content.negotiation)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.testcontainers.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+}
+
+// Testcontainers needs JUnit 5; this also settles which platform kotlin-test
+// resolves against.
+tasks.test {
+    useJUnitPlatform()
 }
