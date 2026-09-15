@@ -4,6 +4,7 @@ package com.gatoryap.server.plugins
 import com.gatoryap.server.auth.AuthenticatedUser
 import com.gatoryap.server.auth.TokenIssuer
 import com.gatoryap.server.config.AuthConfig
+import com.gatoryap.server.config.RateLimitConfig
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -14,6 +15,9 @@ import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.ratelimit.RateLimit
+import io.ktor.server.plugins.ratelimit.RateLimitName
+import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import java.util.UUID
@@ -53,6 +57,12 @@ fun Application.configureStatusPages() {
                 ErrorResponse(error = "internal_error"),
             )
         }
+
+        // The rate limiter rejects before any handler runs, so its response is
+        // shaped here to match every other error.
+        status(HttpStatusCode.TooManyRequests) { call, status ->
+            call.respond(status, ErrorResponse(error = "too_many_requests"))
+        }
     }
 }
 
@@ -80,7 +90,27 @@ fun Application.configureAuthentication(tokenIssuer: TokenIssuer, config: AuthCo
     }
 }
 
+/**
+ * Caps credential guessing against the login and registration endpoints.
+ *
+ * The limiter is in memory, so it counts per instance and resets on deploy.
+ * That is genuine protection for a single server but will need a shared store
+ * once more than one is running.
+ */
+fun Application.configureRateLimit(config: RateLimitConfig) {
+    install(RateLimit) {
+        register(RateLimitName(AUTH_RATE_LIMIT)) {
+            rateLimiter(limit = config.attempts, refillPeriod = config.window)
+            // Counted per caller; the default key is global, which would let one
+            // attacker lock out everyone.
+            requestKey { call -> call.request.origin.remoteAddress }
+        }
+    }
+}
+
 const val JWT_PROVIDER: String = "auth-jwt"
+
+const val AUTH_RATE_LIMIT: String = "auth"
 
 private fun String.toUuidOrNull(): UUID? = runCatching { UUID.fromString(this) }.getOrNull()
 

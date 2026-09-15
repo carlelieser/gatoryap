@@ -97,6 +97,22 @@ class AuthConfigTest {
         assertEquals("gatoryap-app", auth.audience)
     }
 
+    @Test
+    fun `defaults the rate limit`() {
+        val rateLimit = AppConfig.fromEnv(envOf()).auth.rateLimit
+        assertEquals(10, rateLimit.attempts)
+        assertEquals(1.minutes, rateLimit.window)
+    }
+
+    @Test
+    fun `reads the rate limit from the environment`() {
+        val rateLimit = AppConfig.fromEnv(
+            envOf("AUTH_RATE_LIMIT_ATTEMPTS" to "3", "AUTH_RATE_LIMIT_WINDOW_MINUTES" to "5")
+        ).auth.rateLimit
+        assertEquals(3, rateLimit.attempts)
+        assertEquals(5.minutes, rateLimit.window)
+    }
+
     private fun envOf(vararg entries: Pair<String, String>): (String) -> String? {
         val values = entries.toMap()
         return { name -> values[name] }

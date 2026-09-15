@@ -5,6 +5,7 @@ import com.gatoryap.server.config.AppConfig
 import com.gatoryap.server.db.DatabaseFactory
 import com.gatoryap.server.plugins.configureAuthentication
 import com.gatoryap.server.plugins.configureMonitoring
+import com.gatoryap.server.plugins.configureRateLimit
 import com.gatoryap.server.plugins.configureSerialization
 import com.gatoryap.server.plugins.configureStatusPages
 import com.gatoryap.server.routes.authRoutes
@@ -31,6 +32,7 @@ fun Application.module(dependencies: ServerDependencies) {
     configureMonitoring()
     configureStatusPages()
     configureAuthentication(dependencies.tokenIssuer, dependencies.authConfig)
+    configureRateLimit(dependencies.authConfig.rateLimit)
 
     healthRoutes(dependencies.dataSource)
     authRoutes(dependencies.authService, dependencies.users)

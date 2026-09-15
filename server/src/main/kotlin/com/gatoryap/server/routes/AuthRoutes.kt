@@ -14,12 +14,15 @@ import com.gatoryap.server.auth.RefreshResult
 import com.gatoryap.server.auth.RegisterResult
 import com.gatoryap.server.auth.toPublicUser
 import com.gatoryap.server.db.UserRepository
+import com.gatoryap.server.plugins.AUTH_RATE_LIMIT
 import com.gatoryap.server.plugins.ErrorResponse
 import com.gatoryap.server.plugins.JWT_PROVIDER
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
+import io.ktor.server.plugins.ratelimit.RateLimitName
+import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingContext
@@ -31,8 +34,13 @@ import io.ktor.server.routing.routing
 fun Application.authRoutes(service: AuthService, users: UserRepository) {
     routing {
         route("/auth") {
-            post("/register") { register(service) }
-            post("/login") { login(service) }
+            // Only the endpoints that take a password are limited: refresh and
+            // logout present a token the caller already holds.
+            rateLimit(RateLimitName(AUTH_RATE_LIMIT)) {
+                post("/register") { register(service) }
+                post("/login") { login(service) }
+            }
+
             post("/refresh") { refresh(service) }
             post("/logout") { logout(service) }
 

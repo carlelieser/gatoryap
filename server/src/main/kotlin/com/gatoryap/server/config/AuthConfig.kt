@@ -14,6 +14,13 @@ data class AuthConfig(
     val audience: String,
     val accessTokenTtl: Duration,
     val refreshTokenTtl: Duration,
+    val rateLimit: RateLimitConfig,
+)
+
+/** Caps on credential-guessing attempts from a single address. */
+data class RateLimitConfig(
+    val attempts: Int,
+    val window: Duration,
 )
 
 /**
@@ -35,6 +42,11 @@ internal object AuthConfigReader {
             ?: DEFAULT_ACCESS_TTL,
         refreshTokenTtl = env("REFRESH_TOKEN_TTL_DAYS")?.toLongOrNull()?.days
             ?: DEFAULT_REFRESH_TTL,
+        rateLimit = RateLimitConfig(
+            attempts = env("AUTH_RATE_LIMIT_ATTEMPTS")?.toIntOrNull() ?: DEFAULT_RATE_LIMIT_ATTEMPTS,
+            window = env("AUTH_RATE_LIMIT_WINDOW_MINUTES")?.toLongOrNull()?.minutes
+                ?: DEFAULT_RATE_LIMIT_WINDOW,
+        ),
     )
 
     /**
@@ -76,4 +88,8 @@ internal object AuthConfigReader {
 
     private val DEFAULT_ACCESS_TTL = 15.minutes
     private val DEFAULT_REFRESH_TTL = 30.days
+
+    /** Generous enough for someone mistyping a password, far below a guessing run. */
+    private const val DEFAULT_RATE_LIMIT_ATTEMPTS = 10
+    private val DEFAULT_RATE_LIMIT_WINDOW = 1.minutes
 }

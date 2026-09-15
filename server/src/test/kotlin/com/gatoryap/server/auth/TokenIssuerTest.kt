@@ -3,6 +3,7 @@ package com.gatoryap.server.auth
 
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.gatoryap.server.config.AuthConfig
+import com.gatoryap.server.config.RateLimitConfig
 import com.gatoryap.server.db.UserRecord
 import java.util.UUID
 import kotlin.test.Test
@@ -87,6 +88,7 @@ class TokenIssuerTest {
         audience = "gatoryap-app",
         accessTokenTtl = accessTokenTtl,
         refreshTokenTtl = 30.days,
+        rateLimit = RateLimitConfig(attempts = 10, window = 1.minutes),
     )
 
     private companion object {

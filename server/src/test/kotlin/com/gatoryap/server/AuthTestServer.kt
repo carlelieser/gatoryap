@@ -44,8 +44,8 @@ private object TestDatabase {
  */
 private val testHasher = Argon2PasswordHasher(Argon2Params(memoryKib = 256, iterations = 1))
 
-private val testEnv: (String) -> String? = { name ->
-    when (name) {
+private fun testEnv(overrides: Map<String, String>): (String) -> String? = { name ->
+    overrides[name] ?: when (name) {
         "JWT_SECRET" -> "a-test-secret-long-enough-to-sign-tokens"
         "DATABASE_URL" -> TestDatabase.config.url
         "DATABASE_USER" -> TestDatabase.config.user
@@ -57,13 +57,20 @@ private val testEnv: (String) -> String? = { name ->
 /**
  * Runs [block] against the real application wired to a throwaway database,
  * starting from an empty users table so tests cannot leak into each other.
+ *
+ * [settings] override environment variables for the case under test.
  */
-fun withAuthServer(block: suspend ApplicationTestBuilder.(HttpClient) -> Unit) = testApplication {
+fun withAuthServer(
+    settings: Map<String, String> = emptyMap(),
+    block: suspend ApplicationTestBuilder.(HttpClient) -> Unit,
+) = testApplication {
     val dataSource = TestDatabase.dataSource
     clearDatabase()
 
     application {
-        module(ServerDependencies.assemble(AppConfig.fromEnv(testEnv), dataSource, testHasher))
+        module(
+            ServerDependencies.assemble(AppConfig.fromEnv(testEnv(settings)), dataSource, testHasher)
+        )
     }
 
     val client = createClient {

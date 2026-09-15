@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.server.rate.limit)
     implementation(libs.java.jwt)
     implementation(libs.bouncycastle.provider)
     implementation(libs.kotlinx.coroutines.core)
