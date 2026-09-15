@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.logback.classic)
 
     testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.ktor.client.content.negotiation)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.junit)
