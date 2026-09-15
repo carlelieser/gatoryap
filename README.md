@@ -1,4 +1,4 @@
-# Gatoryap
+# GatorYap
 
 A social platform. Kotlin Multiplatform clients (Android, iOS) sharing a Compose
 Multiplatform UI, backed by a Ktor server and Postgres.
