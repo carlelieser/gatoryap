@@ -1,0 +1,33 @@
+Gatoryap is licensed per-component. There is no single license covering this
+repository — check the directory a file lives in before reusing it.
+
+    server/     GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)
+                See server/LICENSE
+
+    core/       Apache License 2.0 (Apache-2.0)
+                See core/LICENSE
+
+    app/        Apache License 2.0 (Apache-2.0)
+                See app/LICENSE
+
+Every source file carries an SPDX-License-Identifier header naming its license.
+That header is authoritative for the file it appears in.
+
+WHY THE SPLIT
+
+The server is AGPL: running a modified copy as a network service obliges you to
+publish those modifications. The core and app modules are Apache-2.0 because they
+are linked into binaries distributed through app stores, whose terms are
+incompatible with GPL-family licenses.
+
+This boundary is load-bearing. AGPL-licensed code must never be linked into
+core/ or app/. Clients communicate with the server over HTTP only.
+
+TRADEMARK
+
+"Gatoryap", the Gatoryap logo, and related marks are not licensed under either
+license above. Forks must adopt a different name and branding.
+
+CONTRIBUTING
+
+Contributions require a signed Contributor License Agreement. See CONTRIBUTING.md.

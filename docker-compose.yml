@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:18.6-alpine
+    container_name: gatoryap-postgres
+    environment:
+      POSTGRES_DB: gatoryap
+      POSTGRES_USER: gatoryap
+      # Local development only. Production credentials come from the environment.
+      POSTGRES_PASSWORD: gatoryap
+    ports:
+      # Host port 5433 avoids colliding with other local Postgres instances.
+      - "5433:5432"
+    volumes:
+      # Postgres 18+ expects a single mount here, not at /data — the image places
+      # the cluster in a subdirectory so pg_upgrade --link works across versions.
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gatoryap -d gatoryap"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

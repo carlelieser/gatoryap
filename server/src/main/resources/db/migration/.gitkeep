@@ -1,0 +1,2 @@
+# Flyway migrations live here, named V1__description.sql and applied on server
+# boot. Intentionally empty — no schema has been designed yet.

@@ -1,0 +1,74 @@
+[versions]
+# Version compatibility is constrained — check the KMP compatibility guide before
+# bumping any of kotlin / agp / gradle:
+# https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html
+#
+# For Kotlin 2.4.20:  AGP 8.5.2–9.3.1,  Gradle 7.6.3–9.7.0
+kotlin = "2.4.20"
+agp = "9.3.1"
+composeMultiplatform = "1.9.3"
+
+ktor = "3.5.2"
+exposed = "1.5.0"
+flyway = "13.7.0"
+hikari = "7.1.0"
+postgres = "42.7.13"
+serialization = "1.11.0"
+datetime = "0.8.0"
+coroutines = "1.11.0"
+logback = "1.6.3"
+androidxActivityCompose = "1.13.0"
+
+jdk = "21"
+androidCompileSdk = "36"
+androidMinSdk = "26"
+
+[libraries]
+# core/ — shared between server and clients. Multiplatform-safe only.
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+# Ktor server
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+
+# Ktor client
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+
+# Persistence (server only)
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+
+# KMP modules use the Android-KMP library plugin; only androidApp uses
+# androidApplication. Mixing androidApplication with the KMP plugin in one
+# module is not allowed under AGP 9.
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

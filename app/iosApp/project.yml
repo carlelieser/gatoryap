@@ -1,0 +1,52 @@
+# Generates iosApp.xcodeproj. Run `just ios-project` after changing this file.
+# The .xcodeproj is a build artifact and is not committed.
+name: iosApp
+
+options:
+  bundleIdPrefix: com.gatoryap
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: iosApp
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: Gatoryap
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gatoryap.ios
+        SWIFT_VERSION: "5.0"
+        # Required by the Kotlin framework build script below.
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # Kotlin/Native does not produce bitcode.
+        ENABLE_BITCODE: NO
+        FRAMEWORK_SEARCH_PATHS:
+          - $(inherited)
+          - $(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+        OTHER_LDFLAGS:
+          - $(inherited)
+          - -framework
+          - ComposeApp
+    preBuildScripts:
+      # Direct integration: builds, copies and signs the Kotlin framework.
+      # https://kotlinlang.org/docs/multiplatform/multiplatform-direct-integration.html
+      - name: Compile Kotlin Framework
+        basedOnDependencyAnalysis: false
+        script: |
+          if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+            echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
+            exit 0
+          fi
+          cd "$SRCROOT/../.."
+          ./gradlew :app:composeApp:embedAndSignAppleFrameworkForXcode
