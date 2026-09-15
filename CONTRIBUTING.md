@@ -46,13 +46,8 @@ See the [README](README.md) for the full command list.
 
 ## Dependency versions
 
-All versions live in `gradle/libs.versions.toml`. Nowhere else.
-
-Kotlin, AGP, and Gradle versions are **constrained to each other**. Before
-bumping any of them, check the
-[KMP compatibility guide](https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html).
-Picking the newest release of each independently will break the build — the
-newest AGP is routinely ahead of what the current Kotlin supports.
+All versions live in `gradle/libs.versions.toml`, nowhere else. Read the comment
+at the top of that file before bumping Kotlin, AGP, or Gradle.
 
 ## Pull requests
 
