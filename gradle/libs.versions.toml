@@ -6,7 +6,7 @@
 # For Kotlin 2.4.20:  AGP 8.5.2–9.3.1,  Gradle 7.6.3–9.7.0
 kotlin = "2.4.20"
 agp = "9.3.1"
-composeMultiplatform = "1.9.3"
+composeMultiplatform = "1.12.0"
 
 ktor = "3.5.2"
 exposed = "1.5.0"
@@ -26,7 +26,10 @@ bouncycastle = "1.86"
 testcontainers = "1.21.4"
 
 jdk = "21"
-androidCompileSdk = "36"
+# Compose 1.12.0 artifacts require compiling against API 37 or later.
+androidCompileSdk = "37"
+# Runtime behavior opt-in is bumped deliberately, not dragged along by compileSdk.
+androidTargetSdk = "36"
 androidMinSdk = "26"
 
 [libraries]

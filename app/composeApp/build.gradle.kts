@@ -3,6 +3,7 @@
 // Shared Compose Multiplatform UI and client logic. Talks to :server over HTTP
 // only — it must never link server code, which is AGPL-licensed.
 
+import org.jetbrains.compose.reload.gradle.ComposeHotRun
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -11,6 +12,8 @@ plugins {
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    // Bundled with Compose Multiplatform 1.12.0, so it carries no version here.
+    id("org.jetbrains.compose.hot-reload")
 }
 
 kotlin {
@@ -59,6 +62,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(compose.desktop.currentOs)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -67,4 +71,12 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
+}
+
+// Desktop sandbox for Compose Hot Reload. Hot reload is desktop-JVM only, so
+// this window is where commonMain UI gets iterated on; Android and iOS render
+// the same App() without reload support.
+// https://kotlinlang.org/docs/multiplatform/compose-hot-reload.html
+tasks.withType<ComposeHotRun>().configureEach {
+    mainClass.set("com.gatoryap.app.MainKt")
 }
