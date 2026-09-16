@@ -4,3 +4,7 @@
 *.jar binary
 *.ttf binary
 gradlew text eol=lf
+
+# Design source binaries, stored via Git LFS (see assets/).
+*.ai filter=lfs diff=lfs merge=lfs -text
+*.pen filter=lfs diff=lfs merge=lfs -text
